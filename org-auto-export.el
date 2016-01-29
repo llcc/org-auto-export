@@ -5,7 +5,7 @@
 ;; Author: Zhe Lei
 ;; Version: 0.1
 ;; Package-Version: 20160129
-;; Package-Requires: (org "8.3.3")
+;; Package-Requires: ((org "8.3.3"))
 ;;
 ;; This file is not part of GNU emacs.
 ;;

@@ -1,4 +1,4 @@
-;;; org-auto-export.el --- automatically export org to pdf by ox-latex
+;;; org-auto-export.el --- automatically and asynchronously export org to pdf by ox-latex
 
 ;; Copyright (C) 2016 by Zhe Lei.
 ;;
@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'org)
+(require 'ox-latex)
 
 (defvar-local org-auto-export-interval 600)
 

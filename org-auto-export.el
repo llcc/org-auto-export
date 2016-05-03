@@ -32,6 +32,29 @@
 
 (defvar-local org-auto-export-timer nil)
 
+(defcustom  org-async-init-file
+  "c:/Users/lzhes/GoogleDrive/Git/Configurations/Emacs/.emacs.d/lisp/org-async-file.el"
+  "file used to loaded by asynchronous process"
+  :type 'file)
+
+(defun org-async-export ()
+  (require 'async)
+  (async-start
+   ;; What to do in the child process
+   `(lambda ()
+      (let ((file ,(buffer-file-name)))
+	(require 'package)
+	(package-initialize)
+	(load-file "c:/Users/admin/GoogleDrive/Git/org-auto-export/org-auto-export.el")
+	(load-file org-async-init-file)
+	(find-file file)
+	(org-latex-export-to-pdf))
+      ,(file-name-nondirectory (buffer-file-name)))
+
+   ;; What to do when it finishes
+   (lambda (result)
+     (message "%s exported sucessfully" result))))
+
 ;;;###autoload
 (define-minor-mode org-auto-export-mode
   "Minor mode to export current org file automatically."
@@ -43,9 +66,7 @@
   (if (and (derived-mode-p 'org-mode) org-auto-export-mode)
       (setq org-auto-export-timer
             (run-at-time nil org-auto-export-interval
-                         (lambda () (interactive)
-                           (save-buffer)
-                           (org-latex-export-to-pdf t))))
+                         'org-async-export))
     (when org-auto-export-timer
       (cancel-timer org-auto-export-timer)
       (setq org-auto-export-timer nil)
@@ -53,9 +74,9 @@
   (when (and (called-interactively-p 'interactive)
              org-auto-export-mode)
     (run-with-idle-timer 0 nil 'message
-			 (format
-			  "Org file exported every %s sec."
-			  org-auto-export-interval))))
+                         (format
+                          "Org file exported every %s sec."
+                          org-auto-export-interval))))
 
 (provide 'org-auto-export)
 ;;; org-auto-export.el ends here
